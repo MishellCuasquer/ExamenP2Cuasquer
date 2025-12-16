@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: support-tickets-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: support_tickets_db
+      MYSQL_USER: tickets_user
+      MYSQL_PASSWORD: tickets_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - support-tickets-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+      start_period: 40s
+
+  support-tickets-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: support-tickets-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/support_tickets_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: tickets_user
+      SPRING_DATASOURCE_PASSWORD: tickets_password
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SERVER_PORT: 3001
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - support-tickets-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/support-tickets"]
+      timeout: 10s
+      retries: 5
+      interval: 30s
+      start_period: 60s
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  support-tickets-network:
+    driver: bridge

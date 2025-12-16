@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  mysql-support:
+    image: mysql:8.0
+    container_name: mysql-support
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: support_tickets_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - support-ticket-network
+
+  # Backend - Spring Boot (desde CuasquerMishell_Leccion1)
+  backend:
+    build:
+      context: ./CuasquerMishell_Leccion1
+      dockerfile: Dockerfile
+    container_name: cuasquer-mishell-backend
+    restart: unless-stopped
+    ports:
+      - "8082:3001"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-support:3306/support_tickets_db?useSSL=false&allowPublicKeyRetrieval=true"
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - mysql-support
+    networks:
+      - support-ticket-network
+
+  # Frontend - Nginx (desde Front)
+  frontend:
+    build:
+      context: ./Front
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "5500:80"
+    depends_on:
+      - backend
+    networks:
+      - support-ticket-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  support-ticket-network:
+    driver: bridge

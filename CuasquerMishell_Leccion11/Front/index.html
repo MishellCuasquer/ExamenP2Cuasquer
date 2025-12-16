@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Tickets de Soporte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-headset"></i> Sistema de Tickets
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="bi bi-database"></i> API: <span id="api-status">Conectando...</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="create-tab" data-bs-toggle="tab" data-bs-target="#create" type="button" role="tab">
+                    <i class="bi bi-plus-circle"></i> Crear Ticket
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab">
+                    <i class="bi bi-list-ul"></i> Listar Tickets
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mainTabContent">
+            <!-- Create Ticket Tab -->
+            <div class="tab-pane fade show active" id="create" role="tabpanel">
+                <div class="row mt-4">
+                    <div class="col-md-8 mx-auto">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Nuevo Ticket de Soporte</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="ticketForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="requesterName" class="form-label">Nombre del Solicitante *</label>
+                                            <input type="text" class="form-control" id="requesterName" required minlength="2" maxlength="100">
+                                            <div class="invalid-feedback">El nombre debe tener entre 2 y 100 caracteres</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="category" class="form-label">Categoría *</label>
+                                            <input type="text" class="form-control" id="category" required maxlength="50">
+                                            <div class="invalid-feedback">La categoría es obligatoria</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="status" class="form-label">Estado *</label>
+                                            <select class="form-select" id="status" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="OPEN">Abierto</option>
+                                                <option value="IN_PROGRESS">En Progreso</option>
+                                                <option value="RESOLVED">Resuelto</option>
+                                                <option value="CLOSED">Cerrado</option>
+                                                <option value="CANCELLED">Cancelado</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="priority" class="form-label">Prioridad *</label>
+                                            <select class="form-select" id="priority" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="LOW">Baja</option>
+                                                <option value="MEDIUM">Media</option>
+                                                <option value="HIGH">Alta</option>
+                                                <option value="CRITICAL">Crítica</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="currency" class="form-label">Moneda</label>
+                                            <select class="form-select" id="currency">
+                                                <option value="">Seleccionar...</option>
+                                                <option value="USD">USD</option>
+                                                <option value="EUR">EUR</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="estimatedCost" class="form-label">Costo Estimado</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="estimatedCost" min="0" step="0.01">
+                                            </div>
+                                            <div class="invalid-feedback">El costo debe ser mayor o igual a 0</div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="dueDate" class="form-label">Fecha Límite</label>
+                                            <input type="date" class="form-control" id="dueDate">
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="bi bi-save"></i> Crear Ticket
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Tickets Tab -->
+            <div class="tab-pane fade" id="list" role="tabpanel">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <!-- Filters -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-funnel"></i> Filtros de Búsqueda</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="filterForm">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label for="searchQuery" class="form-label">Buscar</label>
+                                            <input type="text" class="form-control" id="searchQuery" placeholder="Número o nombre">
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="filterStatus" class="form-label">Estado</label>
+                                            <select class="form-select" id="filterStatus">
+                                                <option value="">Todos</option>
+                                                <option value="OPEN">Abierto</option>
+                                                <option value="IN_PROGRESS">En Progreso</option>
+                                                <option value="RESOLVED">Resuelto</option>
+                                                <option value="CLOSED">Cerrado</option>
+                                                <option value="CANCELLED">Cancelado</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="filterCurrency" class="form-label">Moneda</label>
+                                            <select class="form-select" id="filterCurrency">
+                                                <option value="">Todas</option>
+                                                <option value="USD">USD</option>
+                                                <option value="EUR">EUR</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="minCost" class="form-label">Costo Mínimo</label>
+                                            <input type="number" class="form-control" id="minCost" min="0" step="0.01">
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="maxCost" class="form-label">Costo Máximo</label>
+                                            <input type="number" class="form-control" id="maxCost" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 mb-3">
+                                            <label for="fromDate" class="form-label">Desde</label>
+                                            <input type="datetime-local" class="form-control" id="fromDate">
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="toDate" class="form-label">Hasta</label>
+                                            <input type="datetime-local" class="form-control" id="toDate">
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="pageSize" class="form-label">Resultados por página</label>
+                                            <select class="form-select" id="pageSize">
+                                                <option value="5">5</option>
+                                                <option value="10" selected>10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label for="sortBy" class="form-label">Ordenar por</label>
+                                            <select class="form-select" id="sortBy">
+                                                <option value="createdAt,desc">Fecha Creación ↓</option>
+                                                <option value="createdAt,asc">Fecha Creación ↑</option>
+                                                <option value="ticketNumber,asc">Número Ticket</option>
+                                                <option value="requesterName,asc">Nombre</option>
+                                                <option value="estimatedCost,desc">Costo ↓</option>
+                                                <option value="estimatedCost,asc">Costo ↑</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3 d-flex align-items-end">
+                                            <div class="btn-group w-100">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-search"></i> Buscar
+                                                </button>
+                                                <button type="button" class="btn btn-secondary" id="clearFilters">
+                                                    <i class="bi bi-x-circle"></i> Limpiar
+                                                </button>
+                                                <button type="button" class="btn btn-info" id="refreshList">
+                                                    <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0"><i class="bi bi-list-ul"></i> Tickets de Soporte</h6>
+                                <span class="badge bg-secondary" id="totalCount">0 tickets</span>
+                            </div>
+                            <div class="card-body">
+                                <div id="loadingSpinner" class="text-center py-4" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </div>
+                                
+                                <div id="ticketsList"></div>
+                                
+                                <!-- Pagination -->
+                                <nav id="paginationContainer" style="display: none;">
+                                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="bi bi-check-circle"></i> Éxito</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="successMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Error</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

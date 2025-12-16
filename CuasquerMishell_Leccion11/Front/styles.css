@@ -1,0 +1,250 @@
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+}
+
+body {
+    background-color: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.nav-tabs .nav-link {
+    border-radius: 8px 8px 0 0;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.badge {
+    font-size: 0.8em;
+    padding: 0.5em 0.8em;
+}
+
+.ticket-card {
+    border-left: 4px solid;
+    transition: all 0.2s ease-in-out;
+}
+
+.ticket-card:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.ticket-card.status-OPEN {
+    border-left-color: var(--info-color);
+}
+
+.ticket-card.status-IN_PROGRESS {
+    border-left-color: var(--warning-color);
+}
+
+.ticket-card.status-RESOLVED {
+    border-left-color: var(--success-color);
+}
+
+.ticket-card.status-CLOSED {
+    border-left-color: var(--dark-color);
+}
+
+.ticket-card.status-CANCELLED {
+    border-left-color: var(--danger-color);
+}
+
+.priority-badge {
+    font-size: 0.7em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.priority-LOW {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.priority-MEDIUM {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.priority-HIGH {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.priority-CRITICAL {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-badge {
+    font-size: 0.8em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.currency-badge {
+    font-size: 0.9em;
+    font-weight: bold;
+    background-color: #e9ecef;
+    color: var(--dark-color);
+}
+
+.ticket-number {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.ticket-meta {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.cost-display {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--success-color);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.api-status-online {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.api-status-offline {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.api-status-connecting {
+    color: var(--warning-color);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ticket-card {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
